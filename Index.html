@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pro - Testeo de Productos Dropshipping</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Base de la Plantilla Bootstrap */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40; /* Color oscuro */
+            padding-top: 1rem;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #495057;
+            color: #ffffff;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .card-kpi {
+            border-left: 4px solid;
+            transition: transform 0.3s;
+        }
+        .card-kpi:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .card-kpi.ventas { border-color: #0d6efd; }
+        .card-kpi.roi { border-color: #198754; }
+        .card-kpi.cpa { border-color: #ffc107; }
+        .card-kpi.envios { border-color: #dc3545; }
+
+        /* --- CSS Específico para las Tarjetas de Testeo (Fusionado del Dashboard Pro original) --- */
+        .product-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #0d6efd;
+        }
+
+        .score-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            margin-left: 10px;
+            color: white;
+        }
+        .score-excellent { background-color: #198754; } /* Verde */
+        .score-good { background-color: #ffc107; } /* Amarillo */
+        .score-average { background-color: #0d6efd; } /* Azul */
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .product-title {
+            font-weight: 600;
+        }
+
+        .profit-box {
+            background-color: #e9f7ee;
+            color: #198754;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border: 1px solid #198754;
+        }
+
+        .profit-title {
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .profit-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .saturation-bar {
+            height: 6px;
+            background: #dee2e6;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .saturation-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+        
+        /* Iconos de Tendencia */
+        .trend-up { color: #198754; }
+        .trend-down { color: #dc3545; }
+        .trend-neutral { color: #6c757d; }
+        
+        /* Notificación */
+        #notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #198754;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+        }
+        #notification.show {
+            transform: translateX(0);
+        }
+
+        /* Indicador de Estacionalidad */
+        .seasonal-indicator {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .seasonal-high { background: #d1e7dd; color: #0f5132; }
+        .seasonal-medium { background: #fff3cd; color: #664d03; }
+        .seasonal-low { background: #f8d7da; color: #58151c; }
+
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div class="sidebar text-white p-3">
+            <h4 class="text-white mb-4">Análisis PRO</h4>
+            <a href="#" class="active" data-section="dashboard" onclick="navigate('dashboard', this)">📊 Dashboard</a>
+            <a href="#" data-section="testeo-activo" onclick="navigate('testeo-activo', this)">🔬 Testeo de Productos</a>
+            <a href="#" data-section="investigacion" onclick="navigate('investigacion', this)">🔍 Investigación (Minea)</a>
+            <a href="#" data-section="anuncios" onclick="navigate('anuncios', this)">📈 Anuncios (TikTok/FB)</a>
+            <a href="#" data-section="config" onclick="navigate('config', this)">⚙️ Configuración Backend</a>
+        </div>
+
+        <div class="main-content flex-grow-1">
+            <header class="mb-4">
+                <h2>Dashboard Multi-Plataforma</h2>
+                <p class="text-muted">Análisis consolidado de E-commerce, Publicidad y Logística.</p>
+            </header>
+            
+            <div id="dashboard" class="section active">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm card-kpi ventas">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">$15,450.00</h5>
+                                <p class="card-text text-muted">Ventas Netas (Últimos 7 días)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm card-kpi roi">
+                            <div class="card-body">
+                                <h5 class="card-title text-success">2.8x</h5>
+                                <p class="card-text text-muted">ROI Promedio (Publicidad)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm card-kpi cpa">
+                            <div class="card-body">
+                                <h5 class="card-title text-warning">$8.50</h5>
+                                <p class="card-text text-muted">CPA General</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm card-kpi envios">
+                            <div class="card-body">
+                                <h5 class="card-title text-danger">342</h5>
+                                <p class="card-text text-muted">Pedidos Pendientes de Envío</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-header">Tendencia de Ventas vs. Costos</div>
+                            <div class="card-body"><canvas id="ventasChart"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-header">Rendimiento por Plataforma</div>
+                            <div class="card-body"><canvas id="plataformaChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="productsChart-container" class="card shadow-sm mb-4">
+                    <div class="card-header">Puntuaciones de Productos Testeados (Gráfico)</div>
+                    <div class="card-body">
+                        <canvas id="productsChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div id="testeo-activo" class="section" style="display:none;">
+                <div class="row">
+                    <div class="col-md-5 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-primary text-white">
+                                <i class="fas fa-flask"></i> 🧪 Nuevo Test de Producto
+                            </div>
+                            <div class="card-body">
+                                <form id="product-test-form">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre del Producto</label>
+                                        <input type="text" class="form-control" name="productName" required value="Producto de Ejemplo">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Costo Prod. ($)</label>
+                                        <input type="number" step="0.01" class="form-control" name="productCost" value="5.00" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Precio Venta ($)</label>
+                                        <input type="number" step="0.01" class="form-control" name="salePrice" value="29.99" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">CPA Estimado ($)</label>
+                                        <input type="number" step="0.01" class="form-control" name="adCost" value="1.00" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Saturación (0.0 a 1.0)</label>
+                                        <input type="number" step="0.01" max="1.0" min="0.0" class="form-control" name="marketSaturation" value="0.50" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tendencia</label>
+                                        <select class="form-select" name="productTrend">
+                                            <option value="Creciente">Creciente</option>
+                                            <option value="Estable">Estable</option>
+                                            <option value="Decreciente">Decreciente</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nicho</label>
+                                        <input type="text" class="form-control" name="productNiche" value="Hogar" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Competencia</label>
+                                        <select class="form-select" name="productCompetition">
+                                            <option value="Baja">Baja</option>
+                                            <option value="Media">Media</option>
+                                            <option value="Alta">Alta</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Estacionalidad</label>
+                                        <select class="form-select" name="productSeasonal">
+                                            <option value="high">Alta</option>
+                                            <option value="medium">Media</option>
+                                            <option value="low">Baja</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Descripción/Notas</label>
+                                        <textarea class="form-control" name="productDescription">Este es un test para evaluar el potencial de este artículo.</textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check-circle"></i> Evaluar Producto</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-success text-white">
+                                <i class="fas fa-list-check"></i> Resultados de Testeo Activo
+                            </div>
+                            <div class="card-body">
+                                <div class="row row-cols-1 row-cols-md-2 g-4" id="products-grid">
+                                    </div>
+                                <small class="text-muted mt-3 d-block">Los nuevos productos testeados aparecerán aquí con su puntuación de potencial. Haz clic en 'Testeo de Productos' en el menú para ver esto.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="investigacion" class="section" style="display:none;">
+                <div class="alert alert-info">Contenido de Investigación (Minea) - Pendiente de implementar.</div>
+            </div>
+            <div id="anuncios" class="section" style="display:none;">
+                <div class="alert alert-info">Contenido de Anuncios (TikTok/FB) - Pendiente de implementar.</div>
+            </div>
+            <div id="config" class="section" style="display:none;">
+                <div class="alert alert-info">Contenido de Configuración Backend - Pendiente de implementar.</div>
+            </div>
+
+
+        </div>
+    </div>
+    
+    <div id="notification">Producto agregado con éxito!</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <script>
+        // Gráfico 1: Ventas vs Costos (Dashboard) - Inicialización
+        const ctxVentas = document.getElementById('ventasChart');
+        new Chart(ctxVentas, {
+            type: 'line',
+            data: {
+                labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [1500, 1850, 2100, 1950, 2400, 2700, 2950],
+                    borderColor: '#0d6efd',
+                    tension: 0.1,
+                    fill: false
+                }, {
+                    label: 'Costos (COGS + ADS)',
+                    data: [500, 600, 750, 650, 800, 900, 950],
+                    borderColor: '#dc3545',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Gráfico 2: Rendimiento por Plataforma (Dashboard) - Inicialización
+        const ctxPlataforma = document.getElementById('plataformaChart');
+        new Chart(ctxPlataforma, {
+            type: 'bar',
+            data: {
+                labels: ['TikTok', 'Facebook', 'Google', 'Pinterest'],
+                datasets: [{
+                    label: 'CPA Promedio',
+                    data: [7.50, 9.20, 12.00, 5.80],
+                    backgroundColor: ['#000000', '#0d6efd', '#dc3545', '#bd081c']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+    
+    <script>
+        // =========================================================
+        // 🌟 FUNCIONES DE CONEXIÓN A LA API (BACKEND PREPARADO)
+        // =========================================================
+
+        /**
+         * Simula la llamada a tu API de Firebase Functions 
+         * para obtener los datos reales de ventas y costos.
+         */
+        async function fetchRealDashboardData() {
+            try {
+                // 🛑 ESTE ES EL PUNTO CLAVE: 
+                // Cuando uses Firebase, reemplaza el 'console.log' con tu URL real.
+                // const response = await fetch('https://tu-firebase-project.cloudfunctions.net/getDashboardMetrics');
+                
+                console.log("Simulando llamada a API del Backend (datos de prueba)...");
+                
+                // Retornamos un objeto JSON que contendría los datos reales
+                return {
+                    ventasData: {
+                        labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7'],
+                        ingresos: [1500, 1850, 2100, 1950, 2400, 2700, 2950],
+                        costos: [500, 600, 750, 650, 800, 900, 950]
+                    },
+                    kpis: {
+                        ventasNetas: "$15,450.00",
+                        roi: "2.8x",
+                        cpa: "$8.50",
+                        pendientesEnvio: "342"
+                    }
+                };
+                
+            } catch (error) {
+                console.error("Error al obtener datos del backend:", error);
+                // Retorna datos de fallback
+                return null;
+            }
+        }
+
+        /**
+         * Actualiza los KPIs (los recuadros superiores) con datos reales.
+         * @param {object} kpis - Objeto con los nuevos valores KPI.
+         */
+        function updateKPIs(kpis) {
+            document.querySelector('.card-kpi.ventas h5').textContent = kpis.ventasNetas;
+            document.querySelector('.card-kpi.roi h5').textContent = kpis.roi;
+            document.querySelector('.card-kpi.cpa h5').textContent = kpis.cpa;
+            document.querySelector('.card-kpi.envios h5').textContent = kpis.pendientesEnvio;
+        }
+
+        /**
+         * Inicializa o actualiza el gráfico de Ventas vs Costos con datos reales.
+         * @param {object} data - Datos para el gráfico.
+         */
+        function updateVentasChart(data) {
+            const chartInstance = Chart.getChart('ventasChart'); 
+            
+            if (chartInstance) {
+                chartInstance.data.labels = data.labels;
+                chartInstance.data.datasets[0].data = data.ingresos;
+                chartInstance.data.datasets[1].data = data.costos;
+                chartInstance.update();
+            }
+        }
+        
+        // =========================================================
+        // 🔬 LÓGICA DE TESTEO DE PRODUCTOS (FÓRMULA ESTRATÉGICA)
+        // =========================================================
+        
+        // --- Datos Iniciales ---
+        const initialProducts = [
+            { id: 1, name: 
