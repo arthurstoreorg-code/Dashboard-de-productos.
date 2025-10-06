@@ -43,43 +43,46 @@
         .card-kpi.cpa { border-color: #ffc107; }
         .card-kpi.envios { border-color: #dc3545; }
 
-        /* --- CSS Específico para las Tarjetas de Testeo (Fusionado del Dashboard Pro original) --- */
+        /* --- CSS Específico para las Tarjetas de Testeo (Minimalista e Intuitivo) --- */
         .product-card {
-            background: #f8f9fa;
+            background: #ffffff; /* Fondo blanco para contraste */
             border: 1px solid #dee2e6;
             border-radius: 8px;
             padding: 15px;
             transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Sombra más pronunciada */
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .product-card:hover {
-            transform: translateY(-5px);
+            transform: scale(1.02); /* Efecto sutil de zoom */
             border-color: #0d6efd;
         }
 
         .score-badge {
-            padding: 4px 10px;
-            border-radius: 12px;
+            padding: 6px 12px;
+            border-radius: 20px; /* Más redondeado */
             font-weight: 700;
-            font-size: 13px;
-            margin-left: 10px;
+            font-size: 14px;
             color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .score-excellent { background-color: #198754; } /* Verde */
-        .score-good { background-color: #ffc107; } /* Amarillo */
-        .score-average { background-color: #0d6efd; } /* Azul */
+        /* Colores de Puntuación Ajustados */
+        .score-excellent { background-color: #198754; } /* Éxito (Verde) */
+        .score-good { background-color: #ffc107; color: #343a40 !important; } /* Advertencia (Amarillo oscuro) */
+        .score-average { background-color: #0d6efd; } /* Primario (Azul) */
+        .score-low { background-color: #dc3545; } /* Peligro (Rojo) */
         
         .product-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start; /* Alineación arriba para título largo */
             margin-bottom: 10px;
         }
 
         .product-title {
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #343a40;
         }
 
         .profit-box {
@@ -97,21 +100,22 @@
         }
 
         .profit-value {
-            font-size: 18px;
+            font-size: 1.5rem;
             font-weight: 700;
         }
 
         .saturation-bar {
-            height: 6px;
-            background: #dee2e6;
-            border-radius: 3px;
+            height: 8px; /* Más visible */
+            background: #e9ecef;
+            border-radius: 4px;
             overflow: hidden;
             margin-top: 5px;
         }
 
         .saturation-fill {
             height: 100%;
-            border-radius: 3px;
+            border-radius: 4px;
+            background-color: #ffc107; /* Amarillo para saturación */
         }
         
         /* Iconos de Tendencia */
@@ -140,11 +144,10 @@
         /* Indicador de Estacionalidad */
         .seasonal-indicator {
             display: inline-block;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 600;
-            margin-left: 5px;
         }
 
         .seasonal-high { background: #d1e7dd; color: #0f5132; }
@@ -159,9 +162,9 @@
             <h4 class="text-white mb-4">Análisis PRO</h4>
             <a href="#" class="active" data-section="dashboard" onclick="navigate('dashboard', this)">📊 Dashboard</a>
             <a href="#" data-section="testeo-activo" onclick="navigate('testeo-activo', this)">🔬 Testeo de Productos</a>
-            <a href="#" data-section="investigacion" onclick="navigate('investigacion', this)">🔍 Investigación (Minea)</a>
-            <a href="#" data-section="anuncios" onclick="navigate('anuncios', this)">📈 Anuncios (TikTok/FB)</a>
-            <a href="#" data-section="config" onclick="navigate('config', this)">⚙️ Configuración Backend</a>
+            <a href="#" data-section="investigacion" onclick="navigate('investigacion', this)">🔍 Investigación</a>
+            <a href="#" data-section="anuncios" onclick="navigate('anuncios', this)">📈 Anuncios</a>
+            <a href="#" data-section="config" onclick="navigate('config', this)">⚙️ Configuración</a>
         </div>
 
         <div class="main-content flex-grow-1">
@@ -175,7 +178,7 @@
                     <div class="col-md-3">
                         <div class="card shadow-sm card-kpi ventas">
                             <div class="card-body">
-                                <h5 class="card-title text-primary">$15,450.00</h5>
+                                <h5 class="card-title text-primary" id="kpi-ventas">$15,450.00</h5>
                                 <p class="card-text text-muted">Ventas Netas (Últimos 7 días)</p>
                             </div>
                         </div>
@@ -184,7 +187,7 @@
                     <div class="col-md-3">
                         <div class="card shadow-sm card-kpi roi">
                             <div class="card-body">
-                                <h5 class="card-title text-success">2.8x</h5>
+                                <h5 class="card-title text-success" id="kpi-roi">2.8x</h5>
                                 <p class="card-text text-muted">ROI Promedio (Publicidad)</p>
                             </div>
                         </div>
@@ -193,7 +196,7 @@
                     <div class="col-md-3">
                         <div class="card shadow-sm card-kpi cpa">
                             <div class="card-body">
-                                <h5 class="card-title text-warning">$8.50</h5>
+                                <h5 class="card-title text-warning" id="kpi-cpa">$8.50</h5>
                                 <p class="card-text text-muted">CPA General</p>
                             </div>
                         </div>
@@ -202,7 +205,7 @@
                     <div class="col-md-3">
                         <div class="card shadow-sm card-kpi envios">
                             <div class="card-body">
-                                <h5 class="card-title text-danger">342</h5>
+                                <h5 class="card-title text-danger" id="kpi-envios">342</h5>
                                 <p class="card-text text-muted">Pedidos Pendientes de Envío</p>
                             </div>
                         </div>
@@ -230,10 +233,10 @@
                         <canvas id="productsChart"></canvas>
                     </div>
                 </div>
-
             </div>
             
             <div id="testeo-activo" class="section" style="display:none;">
+                <h3 class="mb-4">🔬 Módulo de Testeo de Productos</h3>
                 <div class="row">
                     <div class="col-md-5 mb-4">
                         <div class="card shadow-sm h-100">
@@ -244,7 +247,190 @@
                                 <form id="product-test-form">
                                     <div class="mb-3">
                                         <label class="form-label">Nombre del Producto</label>
-                                        <input type="text" class="form-control" name="productName" required value="Producto de Ejemplo">
+                                        <input type="text" class="form-control" name="productName" required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <label class="form-label">Costo Prod. ($)</label>
+                                            <input type="number" step="0.01" class="form-control" name="productCost" required>
+                                        </div>
+                                        <div class="col">
+                                            <label class="form-label">Precio Venta ($)</label>
+                                            <input type="number" step="0.01" class="form-control" name="salePrice" required>
+                                        </div>
+                                        <div class="col">
+                                            <label class="form-label">CPA Estimado ($)</label>
+                                            <input type="number" step="0.01" class="form-control" name="adCost" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Saturación (0.0 a 1.0)</label>
+                                        <input type="number" step="0.01" max="1.0" min="0.0" class="form-control" name="marketSaturation" required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <label class="form-label">Tendencia</label>
+                                            <select class="form-select" name="productTrend">
+                                                <option value="Creciente">Creciente</option>
+                                                <option value="Estable">Estable</option>
+                                                <option value="Decreciente">Decreciente</option>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label class="form-label">Competencia</label>
+                                            <select class="form-select" name="productCompetition">
+                                                <option value="Baja">Baja</option>
+                                                <option value="Media">Media</option>
+                                                <option value="Alta">Alta</option>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label class="form-label">Estacionalidad</label>
+                                            <select class="form-select" name="productSeasonal">
+                                                <option value="high">Alta</option>
+                                                <option value="medium">Media</option>
+                                                <option value="low">Baja</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Descripción/Notas</label>
+                                        <textarea class="form-control" name="productDescription"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check-circle"></i> Evaluar Producto</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-success text-white">
+                                <i class="fas fa-list-check"></i> Resultados de Testeo Activo
+                            </div>
+                            <div class="card-body">
+                                <div class="row row-cols-1 row-cols-md-2 g-4" id="products-grid">
+                                    <p class="text-muted p-3">Aún no has testeado productos. ¡Usa el formulario de la izquierda!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="investigacion" class="section" style="display:none;">
+                <h3 class="mb-4">🔍 Módulo de Investigación</h3>
+                <div class="alert alert-warning">Esta sección está pendiente de desarrollo. Aquí se integrarán herramientas como Minea.</div>
+            </div>
+            <div id="anuncios" class="section" style="display:none;">
+                <h3 class="mb-4">📈 Módulo de Anuncios</h3>
+                <div class="alert alert-warning">Esta sección está pendiente de desarrollo. Aquí se integrarán métricas de TikTok/FB Ads.</div>
+            </div>
+            <div id="config" class="section" style="display:none;">
+                <h3 class="mb-4">⚙️ Configuración Backend</h3>
+                <div class="alert alert-info">Aquí se agregarán las opciones para configurar las API keys (claves) de tus plataformas (Vercel, Firebase, etc.).</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <script>
+        // =========================================================
+        // 🛠️ LÓGICA DE NAVEGACIÓN Y KPI (Mantenida Estática por ahora)
+        // =========================================================
+        let products = [];
+        let ventasChartInstance;
+        let plataformaChartInstance;
+        let productsChartInstance;
+
+        // Inicialización de Gráficos (con datos de prueba estáticos)
+        function initCharts() {
+            // Gráfico 1: Ventas vs Costos
+            const ctxVentas = document.getElementById('ventasChart');
+            ventasChartInstance = new Chart(ctxVentas, {
+                type: 'line',
+                data: {
+                    labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7'],
+                    datasets: [{
+                        label: 'Ingresos',
+                        data: [1500, 1850, 2100, 1950, 2400, 2700, 2950],
+                        borderColor: '#0d6efd',
+                        tension: 0.1,
+                        fill: false
+                    }, {
+                        label: 'Costos (COGS + ADS)',
+                        data: [500, 600, 750, 650, 800, 900, 950],
+                        borderColor: '#dc3545',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+
+            // Gráfico 2: Rendimiento por Plataforma
+            const ctxPlataforma = document.getElementById('plataformaChart');
+            plataformaChartInstance = new Chart(ctxPlataforma, {
+                type: 'bar',
+                data: {
+                    labels: ['TikTok', 'Facebook', 'Google', 'Pinterest'],
+                    datasets: [{
+                        label: 'CPA Promedio',
+                        data: [7.50, 9.20, 12.00, 5.80],
+                        backgroundColor: ['#000000', '#0d6efd', '#dc3545', '#bd081c']
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+            });
+
+            // Gráfico 3: Puntuaciones de Productos (Inicializado vacío)
+            const ctxProducts = document.getElementById('productsChart');
+            productsChartInstance = new Chart(ctxProducts, {
+                type: 'polarArea',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
+                options: { responsive: true, scales: { r: { pointLabels: { display: true, centerPointLabels: true, font: { size: 14 } } } } }
+            });
+        }
+
+        // Función de navegación del menú lateral
+        function navigate(sectionId, element) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+
+            document.querySelectorAll('.sidebar a').forEach(a => {
+                a.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+        
+        // =========================================================
+        // 🔬 LÓGICA DE TESTEO DE PRODUCTOS (FÓRMULA ESTRATÉGICA)
+        // =========================================================
+        
+        /**
+         * Calcula una puntuación de potencial (0-100) basada en métricas clave.
+         * @param {object} product - Datos del producto.
+         */
+        function calculateProductScore(product) {
+            // FÓRMULA CLAVE: Prioriza Margen, Baja Saturación, y Tendencia Creciente
+            const margin = product.price - product.cost - product.cpa;
+            let score = 0;
+
+            // Peso de Margen (35%): Mayor porcentaje de ganancia neta.
+            score += Math.min(35, (margin / product.price) * 100 * 0.7);
+
+            // Peso de Saturación (30%): Menor saturación (1 - saturacion) = más puntos.
+            score += (1 - product.saturation) * 30; 
+
+            // Peso de Tendencia (20%): Creciente da más puntos.
+            if (product.trend === 'Creciente') score += 20;
+            else if (product.trend                             <input type="text" class="form-control" name="productName" required value="Producto de Ejemplo">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Costo Prod. ($)</label>
